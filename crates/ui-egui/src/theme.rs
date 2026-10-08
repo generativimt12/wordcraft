@@ -134,7 +134,8 @@ pub fn install_fonts(ctx: &egui::Context) {
     add(&mut fonts, "InterSemiBold", include_bytes!("../../../assets/fonts/Inter-SemiBold.ttf"));
     add(&mut fonts, "SourceSans", include_bytes!("../../../assets/fonts/SourceSans3-Regular.ttf"));
     add(&mut fonts, "Mono", include_bytes!("../../../assets/fonts/JetBrainsMono-Regular.ttf"));
-    // Noto Sans Hebrew is bundled so Hebrew renders correctly on every Windows machine.\n    add(&mut fonts, "NotoHebrew", include_bytes!("../../../assets/fonts/NotoSansHebrew-Regular.ttf"));
+    // Noto Sans Hebrew is bundled so Hebrew renders correctly on every Windows machine.
+    add(&mut fonts, "NotoHebrew", include_bytes!("../../../assets/fonts/NotoSansHebrew-Regular.ttf"));
     if let Some(prop) = fonts.families.get_mut(&FontFamily::Proportional) {
         prop.insert(0, "Inter".into());
         prop.push("SourceSans".into());
