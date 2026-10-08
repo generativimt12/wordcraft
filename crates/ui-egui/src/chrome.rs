@@ -8,7 +8,7 @@ use crate::theme::{Tokens, medium, regular, semibold};
 use crate::{WordApp, icons};
 use crate::i18n::{Language, tr};
 
-fn tl(app: &WordApp, s: &str) -> String { tr(if app.ui.language == "he" { Language::Hebrew } else { Language::English }, s) }
+fn tl(app: &WordApp, s: &str) -> String { tr(app.ui_language(), s) }
 
 fn qat_button(ui: &mut Ui, app: &mut WordApp, icon: &str, tip: &str, id: &str, enabled: bool) {
     let t = Tokens::get(ui.ctx());
@@ -68,9 +68,9 @@ pub fn title_bar(app: &mut WordApp, ui: &mut Ui) {
                     }
                 }
                 ui.add_space(8.0);
-                let lang_label = if app.ui.language == "he" { "EN" } else { "עב" };
+                let lang_label = if app.is_rtl() { "EN" } else { "עב" };
                 if ui.button(egui::RichText::new(lang_label).font(semibold(11.0))).on_hover_text(tl(app, "Language")).clicked() {
-                    let next = if app.ui.language == "he" { "en" } else { "he" };
+                    let next = if app.is_rtl() { "en" } else { "he" };
                     let _ = app.run("ui.language", json!({"language": next}));
                     ui.ctx().request_repaint();
                 }
@@ -175,7 +175,7 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                 if app.session.sel.focus.story != StoryRef::Body {
                     st(ui, "Editing header/footer");
                 }
-                st(ui, if app.ui.language == "he" { "עברית (ישראל)" } else { "English (United States)" });
+                st(ui, if app.is_rtl() { "עברית (ישראל)" } else { "English (United States)" });
                 if app.session.doc.settings.track_changes {
                     st(ui, "Track Changes: On");
                 }
