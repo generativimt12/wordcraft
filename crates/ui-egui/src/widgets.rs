@@ -26,7 +26,7 @@ pub fn shortcut_text(app: &WordApp, id: &str) -> String {
 }
 
 fn tooltip(app: &WordApp, resp: Response, label: &str, id: &str) -> Response {
-    let label = tr(if app.ui.language == "he" { crate::i18n::Language::Hebrew } else { crate::i18n::Language::English }, label);
+    let label = tr(app.ui_language(), label);
     let sc = shortcut_text(app, id);
     let desc = app.session.registry.get(id).map(|s| s.location).unwrap_or("");
     let enabled = app.session.registry.get(id).map(|s| (s.enabled)(&app.session).is_none()).unwrap_or(true);
@@ -85,7 +85,7 @@ pub fn big(ui: &mut Ui, app: &mut WordApp, icon: &str, label: &str, id: &str, pa
     let mut y = r.min.y + 43.0;
     let lines: Vec<&str> = label.split('\n').collect();
     for (i, l) in lines.iter().enumerate() {
-        let txt = if menu && i + 1 == lines.len() { format!("{} ▾", tr(if app.ui.language == "he" { crate::i18n::Language::Hebrew } else { crate::i18n::Language::English }, l)) } else { tr(if app.ui.language == "he" { crate::i18n::Language::Hebrew } else { crate::i18n::Language::English }, l) };
+        let txt = if menu && i + 1 == lines.len() { format!("{} ▾", tr(app.ui_language(), l)) } else { tr(app.ui_language(), l) };
         ui.painter().text(pos2(r.center().x, y), Align2::CENTER_TOP, txt, regular(11.5), if on { t.text } else { t.text_disabled });
         y += 13.0;
     }
@@ -107,7 +107,7 @@ pub fn small(ui: &mut Ui, app: &mut WordApp, icon: &str, label: Option<&str>, ti
     let (c, a) = if on { (t.icon, t.accent) } else { (t.text_disabled, t.text_disabled) };
     icons::paint(ui.painter(), ic, icon, c, a);
     if let Some(l) = label {
-        ui.painter().text(pos2(r.min.x + 24.0, r.center().y), Align2::LEFT_CENTER, tr(if app.ui.language == "he" { crate::i18n::Language::Hebrew } else { crate::i18n::Language::English }, l), regular(11.5), if on { t.text } else { t.text_disabled });
+        ui.painter().text(pos2(r.min.x + 24.0, r.center().y), Align2::LEFT_CENTER, tr(app.ui_language(), l), regular(11.5), if on { t.text } else { t.text_disabled });
     }
     let resp = tooltip(app, resp, tip, id);
     if resp.clicked() && on {
@@ -173,7 +173,7 @@ pub fn menu_button(
         let lines: Vec<&str> = label.unwrap_or("").split('\n').collect();
         let mut y = r.min.y + 43.0;
         for (i, l) in lines.iter().enumerate() {
-            let txt = if i + 1 == lines.len() { format!("{} ▾", tr(if app.ui.language == "he" { crate::i18n::Language::Hebrew } else { crate::i18n::Language::English }, l)) } else { tr(if app.ui.language == "he" { crate::i18n::Language::Hebrew } else { crate::i18n::Language::English }, l) };
+            let txt = if i + 1 == lines.len() { format!("{} ▾", tr(app.ui_language(), l)) } else { tr(app.ui_language(), l) };
             ui.painter().text(pos2(r.center().x, y), Align2::CENTER_TOP, txt, regular(11.5), t.text);
             y += 13.0;
         }
@@ -199,7 +199,7 @@ pub fn menu_button(
 /// A ribbon group: content, a centred label below and a divider on the right.
 pub fn group(ui: &mut Ui, title: &str, launcher: Option<&str>, app: &mut WordApp, add: impl FnOnce(&mut Ui, &mut WordApp)) {
     let t = Tokens::get(ui.ctx());
-    let label_w = ui.ctx().fonts_mut(|f| f.layout_no_wrap(tr(if app.ui.language == "he" { crate::i18n::Language::Hebrew } else { crate::i18n::Language::English }, title), regular(11.0), t.group_label).size().x);
+    let label_w = ui.ctx().fonts_mut(|f| f.layout_no_wrap(tr(app.ui_language(), title), regular(11.0), t.group_label).size().x);
     let start = ui.cursor().min;
     let inner = ui.vertical(|ui| {
         ui.set_min_width(label_w + if launcher.is_some() { 22.0 } else { 10.0 });
@@ -210,7 +210,7 @@ pub fn group(ui: &mut Ui, title: &str, launcher: Option<&str>, app: &mut WordApp
     });
     let r = inner.response.rect;
     let r = Rect::from_min_max(start, pos2(r.max.x, start.y + CONTENT_H + LABEL_H));
-    ui.painter().text(pos2(r.center().x, r.max.y - 8.0), Align2::CENTER_CENTER, tr(if app.ui.language == "he" { crate::i18n::Language::Hebrew } else { crate::i18n::Language::English }, title), regular(11.0), t.group_label);
+    ui.painter().text(pos2(r.center().x, r.max.y - 8.0), Align2::CENTER_CENTER, tr(app.ui_language(), title), regular(11.0), t.group_label);
     if let Some(cmd) = launcher {
         let lr = Rect::from_center_size(pos2(r.max.x - 6.0, r.max.y - 8.0), vec2(11.0, 11.0));
         let resp = ui.interact(lr, ui.id().with(("launch", title)), Sense::click());
