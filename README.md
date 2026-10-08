@@ -248,4 +248,4 @@ Forks and modified versions must remove them.
 </p>
 
 
-<!-- Hebrew build verification: 2026-10-08 -->
+<!-- Hebrew build verification: 2026-10-08 / Actions enabled -->
