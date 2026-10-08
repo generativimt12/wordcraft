@@ -377,7 +377,7 @@ fn body(app: &mut WordApp, ui: &mut Ui, d: &mut Dialog) -> bool {
             ok || cancel
         }
         Dialog::Paragraph { align, left, right, first, before, after, line, keep_next, keep_lines, page_break, widow } => {
-            ui.label(egui::RichText::new("General").font(semibold(12.5)));
+            ui.label(egui::RichText::new("כללי").font(semibold(12.5)));
             egui::ComboBox::from_label("Alignment").selected_text(align.clone()).show_ui(ui, |ui| {
                 for a in ["left", "center", "right", "justify"] {
                     ui.selectable_value(align, a.to_string(), a);
@@ -472,7 +472,7 @@ fn body(app: &mut WordApp, ui: &mut Ui, d: &mut Dialog) -> bool {
                         Err(e) => *message = e,
                     }
                 }
-                if ui.button("Close").clicked() || ui.input(|i| i.key_pressed(egui::Key::Escape)) {
+                if ui.button("סגור").clicked() || ui.input(|i| i.key_pressed(egui::Key::Escape)) {
                     close = true;
                 }
             });
@@ -564,11 +564,11 @@ fn body(app: &mut WordApp, ui: &mut Ui, d: &mut Dialog) -> bool {
         Dialog::WordCount { stats } => {
             egui::Grid::new("wc").num_columns(2).spacing(vec2(30.0, 6.0)).show(ui, |ui| {
                 for (l, k) in [
-                    ("Pages", "pages"),
+                    ("עמודים", "pages"),
                     ("Words", "words"),
                     ("Characters (no spaces)", "characters"),
                     ("Characters (with spaces)", "charactersWithSpaces"),
-                    ("Paragraphs", "paragraphs"),
+                    ("פסקאות", "paragraphs"),
                     ("Lines", "lines"),
                 ] {
                     ui.label(l);
@@ -576,7 +576,7 @@ fn body(app: &mut WordApp, ui: &mut Ui, d: &mut Dialog) -> bool {
                     ui.end_row();
                 }
             });
-            let (ok, cancel) = buttons(ui, "Close");
+            let (ok, cancel) = buttons(ui, "סגור");
             ok || cancel
         }
         Dialog::Zoom { percent } => {
@@ -703,7 +703,7 @@ fn body(app: &mut WordApp, ui: &mut Ui, d: &mut Dialog) -> bool {
         Dialog::About { tab } => {
             ui.set_width(660.0);
             ui.horizontal(|ui| {
-                for (i, l) in ["About", "Contributors", "Models"].into_iter().enumerate() {
+                for (i, l) in ["אודות", "תורמים", "מודלים"].into_iter().enumerate() {
                     let i = i as u8;
                     if ui.selectable_label(*tab == i, l).clicked() {
                         *tab = i;
@@ -732,7 +732,7 @@ fn body(app: &mut WordApp, ui: &mut Ui, d: &mut Dialog) -> bool {
                     );
                 }
             }
-            let (ok, cancel) = buttons(ui, "Close");
+            let (ok, cancel) = buttons(ui, "סגור");
             ok || cancel
         }
     }
