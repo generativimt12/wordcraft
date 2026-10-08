@@ -10,7 +10,7 @@ use crate::i18n::{Language, tr};
 
 pub const TABS: [&str; 11] = ["File", "Home", "Insert", "Draw", "Design", "Layout", "References", "Mailings", "Review", "View", "Help"];
 
-fn tl(app: &WordApp, s: &str) -> String { tr(if app.ui.language == "he" { Language::Hebrew } else { Language::English }, s) }
+fn tl(app: &WordApp, s: &str) -> String { tr(app.ui_language(), s) }
 
 fn in_table(app: &WordApp) -> bool {
     app.session.sel.focus.path.cell().is_some()
@@ -23,7 +23,7 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
         .exact_size(30.0)
         .frame(egui::Frame::NONE.fill(t.tab_strip).inner_margin(egui::Margin { left: 8, right: 10, top: 0, bottom: 0 }))
         .show(ui, |ui| {
-            ui.with_layout(if app.ui.language == "he" { egui::Layout::right_to_left(egui::Align::Center) } else { egui::Layout::left_to_right(egui::Align::Center) }, |ui| {
+            ui.with_layout(if app.is_rtl() { egui::Layout::right_to_left(egui::Align::Center) } else { egui::Layout::left_to_right(egui::Align::Center) }, |ui| {
                 ui.spacing_mut().item_spacing = vec2(2.0, 0.0);
                 let mut tabs: Vec<&str> = TABS.to_vec();
                 if in_table(app) {
@@ -96,7 +96,7 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
         )
         .show(ui, |ui| {
             egui::ScrollArea::horizontal().scroll_bar_visibility(egui::scroll_area::ScrollBarVisibility::AlwaysHidden).show(ui, |ui| {
-                ui.with_layout(if app.ui.language == "he" { egui::Layout::right_to_left(egui::Align::Min) } else { egui::Layout::left_to_right(egui::Align::Min) }, |ui| {
+                ui.with_layout(if app.is_rtl() { egui::Layout::right_to_left(egui::Align::Min) } else { egui::Layout::left_to_right(egui::Align::Min) }, |ui| {
                     ui.spacing_mut().item_spacing = vec2(2.0, 2.0);
                     match app.ui.tab.as_str() {
                         "Home" => home(app, ui),
