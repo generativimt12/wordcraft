@@ -378,16 +378,24 @@ impl WordApp {
             return;
         }
         let t = theme::Tokens::get(&ctx);
-        if self.ui.backstage {
-            backstage::show(self, ui);
+        let rtl = self.ui.language == "he";
+        let mut render = |ui: &mut egui::Ui| {
+            if self.ui.backstage {
+                backstage::show(self, ui);
+            } else {
+                chrome::title_bar(self, ui);
+                ribbon::show(self, ui);
+                chrome::status_bar(self, ui);
+                panes::show(self, ui);
+                egui::CentralPanel::default().frame(egui::Frame::NONE.fill(t.canvas)).show(ui, |ui| {
+                    canvas::show(self, ui);
+                });
+            }
+        };
+        if rtl {
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| render(ui));
         } else {
-            chrome::title_bar(self, ui);
-            ribbon::show(self, ui);
-            chrome::status_bar(self, ui);
-            panes::show(self, ui);
-            egui::CentralPanel::default().frame(egui::Frame::NONE.fill(t.canvas)).show(ui, |ui| {
-                canvas::show(self, ui);
-            });
+            ui.with_layout(egui::Layout::left_to_right(egui::Align::TOP), |ui| render(ui));
         }
         dialogs::show(self, &ctx);
         keys::global_shortcuts(self, &ctx);
