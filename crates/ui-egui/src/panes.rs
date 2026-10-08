@@ -10,21 +10,21 @@ use crate::theme::{Tokens, regular, semibold};
 pub fn show(app: &mut WordApp, ui: &mut Ui) {
     let t = Tokens::get(ui.ctx());
     if app.session.view.nav_pane {
-        if app.ui.language == "he" { egui::Panel::right("nav_pane") } else { egui::Panel::left("nav_pane") }
+        if app.is_rtl() { egui::Panel::right("nav_pane") } else { egui::Panel::left("nav_pane") }
             .default_size(260.0)
             .resizable(true)
             .frame(egui::Frame::NONE.fill(t.panel).inner_margin(10).stroke(Stroke::new(1.0, t.border)))
             .show(ui, |ui| nav(app, ui));
     }
     if app.session.view.styles_pane {
-        if app.ui.language == "he" { egui::Panel::left("styles_pane") } else { egui::Panel::right("styles_pane") }
+        if app.is_rtl() { egui::Panel::left("styles_pane") } else { egui::Panel::right("styles_pane") }
             .default_size(250.0)
             .resizable(true)
             .frame(egui::Frame::NONE.fill(t.panel).inner_margin(10).stroke(Stroke::new(1.0, t.border)))
             .show(ui, |ui| styles(app, ui));
     }
     if app.session.view.comments_pane {
-        if app.ui.language == "he" { egui::Panel::left("comments_pane") } else { egui::Panel::right("comments_pane") }
+        if app.is_rtl() { egui::Panel::left("comments_pane") } else { egui::Panel::right("comments_pane") }
             .default_size(290.0)
             .resizable(true)
             .frame(egui::Frame::NONE.fill(t.panel).inner_margin(10).stroke(Stroke::new(1.0, t.border)))
