@@ -109,7 +109,7 @@ pub fn title_bar(app: &mut WordApp, ui: &mut Ui) {
                         }
                         ui.add_space(8.0);
                     }
-                    // Search ("Tell me").
+                    // Search ("אמור לי").
                     let (r, resp) = ui.allocate_exact_size(vec2(260.0, 26.0), Sense::click());
                     ui.painter().rect(r, 6.0, if resp.hovered() { t.input } else { t.ribbon }, Stroke::new(1.0, t.border), egui::StrokeKind::Inside);
                     icons::paint(ui.painter(), Rect::from_min_size(r.min + vec2(8.0, 5.0), vec2(16.0, 16.0)), "search", t.text_dim, t.accent);
@@ -129,7 +129,7 @@ pub fn title_bar(app: &mut WordApp, ui: &mut Ui) {
                 } else if app.session.path.is_some() {
                     "Saved"
                 } else {
-                    "Not saved"
+                    "לא נשמר"
                 }
             );
             let g = ui.ctx().fonts_mut(|f| f.layout_no_wrap(title.clone(), semibold(12.5), t.text));
@@ -193,7 +193,7 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                     {
                         let _ = app.run("ui.dialog", json!({"name": "zoom"}));
                     }
-                    if small_icon(ui, "plus", "Zoom In") {
+                    if small_icon(ui, "plus", "הגדל תצוגה") {
                         let _ = app.run("view.zoomIn", json!({}));
                     }
                     // Zoom slider (10%–500%, 100% in the middle).
@@ -203,7 +203,7 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                     if ui.add(slider).changed() {
                         let _ = app.run("view.zoom", json!({"value": (v * 100.0).round()}));
                     }
-                    if small_icon(ui, "minus", "Zoom Out") {
+                    if small_icon(ui, "minus", "הקטן תצוגה") {
                         let _ = app.run("view.zoomOut", json!({}));
                     }
                     ui.add_space(10.0);
