@@ -56,9 +56,13 @@ pub struct UiState {
     pub dark: bool,
     pub nav_tab: String,
     pub show_discord: bool,
-    /// Interface language. Hebrew is the default for this build.
+    /// Interface language code (`en`/`he`). When `language_auto` is true this follows the OS UI language.
     pub language: String,
+    #[serde(default = "default_language_auto")]
+    pub language_auto: bool,
 }
+
+fn default_language_auto() -> bool { true }
 
 impl Default for UiState {
     fn default() -> Self {
@@ -71,7 +75,8 @@ impl Default for UiState {
             dark: false,
             nav_tab: "headings".into(),
             show_discord: true,
-            language: "he".into(),
+            language: match i18n::system_language() { i18n::Language::Hebrew => "he", i18n::Language::English => "en" }.into(),
+            language_auto: true,
         }
     }
 }
@@ -127,6 +132,14 @@ impl WordApp {
             word_count: (0, 0),
             last_autosave: 0.0,
         }
+    }
+
+    pub fn is_rtl(&self) -> bool {
+        self.ui.language == "he"
+    }
+
+    pub fn ui_language(&self) -> i18n::Language {
+        if self.is_rtl() { i18n::Language::Hebrew } else { i18n::Language::English }
     }
 
     pub fn with_control(mut self, rx: std::sync::mpsc::Receiver<ControlRequest>) -> Self {
@@ -242,7 +255,8 @@ impl WordApp {
             "ui.language" => {
                 let lang = s("language").unwrap_or("he");
                 self.ui.language = if lang == "en" { "en" } else { "he" }.into();
-                json!({"language": self.ui.language, "rtl": self.ui.language == "he"})
+                self.ui.language_auto = false;
+                json!({"language": self.ui.language, "rtl": self.is_rtl()})
             }
             "ui.openFileDialog" => {
                 self.open_dialog();
@@ -378,7 +392,7 @@ impl WordApp {
             return;
         }
         let t = theme::Tokens::get(&ctx);
-        let rtl = self.ui.language == "he";
+        let rtl = self.is_rtl();
         let mut render = |ui: &mut egui::Ui| {
             if self.ui.backstage {
                 backstage::show(self, ui);
