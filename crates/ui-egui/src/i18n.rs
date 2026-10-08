@@ -16,6 +16,37 @@ impl Language {
     }
 }
 
+/// Detect the user interface language of the host OS. Hebrew is the only non-English
+/// locale currently shipped, so every other locale intentionally falls back to English.
+pub fn system_language() -> Language {
+    let locale = if cfg!(target_os = "windows") {
+        std::process::Command::new("powershell.exe")
+            .args(["-NoProfile", "-NonInteractive", "-Command", "(Get-UICulture).Name"])
+            .output()
+            .ok()
+            .and_then(|o| String::from_utf8(o.stdout).ok())
+            .unwrap_or_default()
+    } else if cfg!(target_os = "macos") {
+        std::process::Command::new("defaults")
+            .args(["read", "-g", "AppleLocale"])
+            .output()
+            .ok()
+            .and_then(|o| String::from_utf8(o.stdout).ok())
+            .unwrap_or_default()
+    } else {
+        std::env::var("LC_ALL")
+            .or_else(|_| std::env::var("LC_MESSAGES"))
+            .or_else(|_| std::env::var("LANG"))
+            .unwrap_or_default()
+    };
+    let locale = locale.trim().to_ascii_lowercase();
+    if locale.starts_with("he") || locale.starts_with("iw") {
+        Language::Hebrew
+    } else {
+        Language::English
+    }
+}
+
 pub fn tr(lang: Language, s: &str) -> String {
     if lang == Language::English { return s.to_owned(); }
     String::from(match s {
