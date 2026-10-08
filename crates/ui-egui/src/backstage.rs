@@ -189,7 +189,7 @@ fn open_list(app: &mut WordApp, ui: &mut Ui) {
 
 fn open_page(app: &mut WordApp, ui: &mut Ui) {
     heading(ui, "פתח");
-    if ui.button(egui::RichText::new("📂  Browse…").font(medium(14.0))).clicked() {
+    if ui.button(egui::RichText::new("📂  עיון…").font(medium(14.0))).clicked() {
         let _ = app.run("ui.openFileDialog", json!({}));
     }
     ui.add_space(18.0);
