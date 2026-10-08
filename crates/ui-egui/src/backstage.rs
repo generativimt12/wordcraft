@@ -20,7 +20,7 @@ const PAGES: [(&str, &str); 9] = [
 
 pub fn show(app: &mut WordApp, ui: &mut Ui) {
     let t = Tokens::get(ui.ctx());
-    if app.ui.language == "he" { egui::Panel::right("backstage_nav") } else { egui::Panel::left("backstage_nav") }
+    if app.is_rtl() { egui::Panel::right("backstage_nav") } else { egui::Panel::left("backstage_nav") }
         .exact_size(200.0)
         .frame(egui::Frame::NONE.fill(APP_COLOR).inner_margin(egui::Margin { left: 0, right: 0, top: 12, bottom: 12 }))
         .show(ui, |ui| {
@@ -47,7 +47,7 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
                 }
                 ui.painter().text(
                     pos2(r.min.x + 22.0, r.center().y),
-                    if app.ui.language == "he" { Align2::RIGHT_CENTER } else { Align2::LEFT_CENTER },
+                    if app.is_rtl() { Align2::RIGHT_CENTER } else { Align2::LEFT_CENTER },
                     label,
                     if active { semibold(14.0) } else { medium(14.0) },
                     egui::Color32::WHITE,
@@ -71,7 +71,7 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
                     if resp.hovered() {
                         ui.painter().rect_filled(r, 0.0, egui::Color32::from_white_alpha(26));
                     }
-                    ui.painter().text(pos2(r.min.x + 22.0, r.center().y), if app.ui.language == "he" { Align2::RIGHT_CENTER } else { Align2::LEFT_CENTER }, label, regular(13.0), egui::Color32::WHITE);
+                    ui.painter().text(pos2(r.min.x + 22.0, r.center().y), if app.is_rtl() { Align2::RIGHT_CENTER } else { Align2::LEFT_CENTER }, label, regular(13.0), egui::Color32::WHITE);
                     if resp.clicked() {
                         if id == "discord" {
                             let _ = app.run("ui.discord", json!({}));
