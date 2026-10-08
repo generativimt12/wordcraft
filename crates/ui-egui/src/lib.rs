@@ -12,6 +12,7 @@ pub mod control;
 pub mod credits;
 pub mod dialogs;
 pub mod icons;
+pub mod i18n;
 pub mod keys;
 pub mod panes;
 pub mod previews;
@@ -55,6 +56,8 @@ pub struct UiState {
     pub dark: bool,
     pub nav_tab: String,
     pub show_discord: bool,
+    /// Interface language. Hebrew is the default for this build.
+    pub language: String,
 }
 
 impl Default for UiState {
@@ -68,6 +71,7 @@ impl Default for UiState {
             dark: false,
             nav_tab: "headings".into(),
             show_discord: true,
+            language: "he".into(),
         }
     }
 }
@@ -234,6 +238,11 @@ impl WordApp {
             "ui.dark" => {
                 self.ui.dark = p.get("value").and_then(Value::as_bool).unwrap_or(!self.ui.dark);
                 json!({"dark": self.ui.dark})
+            }
+            "ui.language" => {
+                let lang = s("language").unwrap_or("he");
+                self.ui.language = if lang == "en" { "en" } else { "he" }.into();
+                json!({"language": self.ui.language, "rtl": self.ui.language == "he"})
             }
             "ui.openFileDialog" => {
                 self.open_dialog();
