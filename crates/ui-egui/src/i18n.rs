@@ -18,7 +18,7 @@ impl Language {
 
 pub fn tr(lang: Language, s: &str) -> String {
     if lang == Language::English { return s.to_owned(); }
-    match s {
+    String::from(match s {
         "File" => "קובץ", "Home" => "בית", "Insert" => "הוספה", "Draw" => "ציור",
         "Design" => "עיצוב", "Layout" => "פריסה", "References" => "הפניות",
         "Mailings" => "דיוור", "Review" => "סקירה", "View" => "תצוגה", "Help" => "עזרה",
@@ -57,6 +57,6 @@ pub fn tr(lang: Language, s: &str) -> String {
         "Theme Colors" => "צבעי ערכת נושא", "Standard Colors" => "צבעים רגילים",
         "Not available right now" => "לא זמין כרגע",
         "Language" => "שפה", "Hebrew" => "עברית", "English" => "אנגלית",
-        _ => s.to_owned(),
-    }
+        _ => s,
+    })
 }
