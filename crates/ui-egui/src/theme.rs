@@ -144,8 +144,8 @@ pub fn install_fonts(ctx: &egui::Context) {
     if let Some(m) = fonts.families.get_mut(&FontFamily::Monospace) {
         m.insert(0, "Mono".into());
     }
-    fonts.families.insert(FontFamily::Name("medium".into()), vec!["InterMedium".into(), "Inter".into(), "SourceSans".into()]);
-    fonts.families.insert(FontFamily::Name("semibold".into()), vec!["InterSemiBold".into(), "Inter".into(), "SourceSans".into()]);
+    fonts.families.insert(FontFamily::Name("medium".into()), vec!["InterMedium".into(), "Inter".into(), "SourceSans".into(), "NotoHebrew".into()]);
+    fonts.families.insert(FontFamily::Name("semibold".into()), vec!["InterSemiBold".into(), "Inter".into(), "SourceSans".into(), "NotoHebrew".into()]);
     for f in wordcraft_fonts::japanese_ui_fonts(false).into_iter().take(1) {
         fonts.font_data.insert("JpUi".into(), Arc::new(FontData::from_static(f.bytes)));
         for fam in [FontFamily::Proportional, FontFamily::Name("medium".into()), FontFamily::Name("semibold".into())] {
