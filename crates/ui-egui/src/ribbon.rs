@@ -6,8 +6,11 @@ use serde_json::{Value, json};
 use crate::theme::{Tokens, medium, regular, semibold};
 use crate::widgets::{CONTENT_H, LABEL_H, big, color_grid, combo, group, menu_button, small, split};
 use crate::{WordApp, icons};
+use crate::i18n::{Language, tr};
 
 pub const TABS: [&str; 11] = ["File", "Home", "Insert", "Draw", "Design", "Layout", "References", "Mailings", "Review", "View", "Help"];
+
+fn tl(app: &WordApp, s: &str) -> String { tr(if app.ui.language == "he" { Language::Hebrew } else { Language::English }, s) }
 
 fn in_table(app: &WordApp) -> bool {
     app.session.sel.focus.path.cell().is_some()
@@ -20,7 +23,7 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
         .exact_size(30.0)
         .frame(egui::Frame::NONE.fill(t.tab_strip).inner_margin(egui::Margin { left: 8, right: 10, top: 0, bottom: 0 }))
         .show(ui, |ui| {
-            ui.horizontal_centered(|ui| {
+            ui.with_layout(if app.ui.language == "he" { egui::Layout::right_to_left(egui::Align::Center) } else { egui::Layout::left_to_right(egui::Align::Center) }, |ui| {
                 ui.spacing_mut().item_spacing = vec2(2.0, 0.0);
                 let mut tabs: Vec<&str> = TABS.to_vec();
                 if in_table(app) {
@@ -29,14 +32,15 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
                 }
                 for tab in tabs {
                     let contextual = tab.starts_with("Table ");
-                    let w = ui.ctx().fonts_mut(|f| f.layout_no_wrap(tab.to_string(), medium(12.5), t.text).size().x) + 18.0;
+                    let display_tab = tl(app, tab);
+                    let w = ui.ctx().fonts_mut(|f| f.layout_no_wrap(display_tab.clone(), medium(12.5), t.text).size().x) + 18.0;
                     let (r, resp) = ui.allocate_exact_size(vec2(w, 30.0), Sense::click());
                     let active = app.ui.tab == tab && !app.ui.backstage;
                     if resp.hovered() && !active {
                         ui.painter().rect_filled(r.shrink2(vec2(0.0, 4.0)), 4.0, t.hover);
                     }
                     let color = if contextual || active { t.accent_text } else { t.text };
-                    ui.painter().text(r.center(), Align2::CENTER_CENTER, tab, if active { semibold(12.5) } else { medium(12.5) }, color);
+                    ui.painter().text(r.center(), Align2::CENTER_CENTER, display_tab, if active { semibold(12.5) } else { medium(12.5) }, color);
                     if active {
                         let u = Rect::from_center_size(pos2(r.center().x, r.max.y - 2.0), vec2(w - 16.0, 3.0));
                         ui.painter().rect_filled(u, 2.0, t.accent);
@@ -65,18 +69,18 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
                     }
                     ui.add_space(6.0);
                     let track = app.session.doc.settings.track_changes;
-                    ui.menu_button(egui::RichText::new(if track { "✎ Reviewing ▾" } else { "✎ Editing ▾" }).font(regular(12.0)), |ui| {
-                        if ui.selectable_label(!track, "Editing — edit the document directly").clicked() {
+                    ui.menu_button(egui::RichText::new(if track { format!("✎ {} ▾", tl(app, "Reviewing")) } else { format!("✎ {} ▾", tl(app, "Editing")) }).font(regular(12.0)), |ui| {
+                        if ui.selectable_label(!track, tl(app, "Editing — edit the document directly")).clicked() {
                             let _ = app.run("review.trackChanges", json!({"value": false}));
                             ui.close();
                         }
-                        if ui.selectable_label(track, "Reviewing — edits become suggestions").clicked() {
+                        if ui.selectable_label(track, tl(app, "Reviewing — edits become suggestions")).clicked() {
                             let _ = app.run("review.trackChanges", json!({"value": true}));
                             ui.close();
                         }
                     });
                     ui.add_space(4.0);
-                    if ui.button(egui::RichText::new("💬 Comments").font(regular(12.0))).clicked() {
+                    if ui.button(egui::RichText::new(format!("💬 {}", tl(app, "Comments"))).font(regular(12.0))).clicked() {
                         let _ = app.run("view.commentsPane", json!({}));
                     }
                 });
@@ -92,7 +96,7 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
         )
         .show(ui, |ui| {
             egui::ScrollArea::horizontal().scroll_bar_visibility(egui::scroll_area::ScrollBarVisibility::AlwaysHidden).show(ui, |ui| {
-                ui.horizontal_top(|ui| {
+                ui.with_layout(if app.ui.language == "he" { egui::Layout::right_to_left(egui::Align::Min) } else { egui::Layout::left_to_right(egui::Align::Min) }, |ui| {
                     ui.spacing_mut().item_spacing = vec2(2.0, 2.0);
                     match app.ui.tab.as_str() {
                         "Home" => home(app, ui),
@@ -122,6 +126,7 @@ fn stack(ui: &mut Ui, add: impl FnOnce(&mut Ui)) {
 }
 
 fn mi(ui: &mut Ui, app: &mut WordApp, label: &str, id: &str, params: Value) {
+    let label = tl(app, label);
     let sc = crate::widgets::shortcut_text(app, id);
     let enabled = crate::widgets::enabled(app, id);
     let resp = ui.add_enabled(enabled, egui::Button::new(label).shortcut_text(sc).min_size(vec2(200.0, 0.0)));
