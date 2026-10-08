@@ -203,7 +203,7 @@ fn comments(app: &mut WordApp, ui: &mut Ui) {
         let _ = app.run("view.commentsPane", json!({"value": false}));
         return;
     }
-    if ui.button("➕ New comment").clicked() {
+    if ui.button("➕ הערה חדשה").clicked() {
         let _ = app.run("review.newComment", json!({"text": ""}));
     }
     ui.separator();
